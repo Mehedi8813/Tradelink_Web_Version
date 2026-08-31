@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 
@@ -31,6 +35,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
 
   async function handleSubmit(e) {
@@ -66,6 +71,42 @@ export default function AdminLoginPage() {
       console.error("Firebase sign-in error code:", err.code);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    setError("");
+    setGoogleLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      const user = userCredential.user;
+
+      await setDoc(
+        doc(db, "adminSessions", user.uid),
+        {
+          email: user.email,
+          name: user.displayName,
+          provider: "google",
+          lastLoginAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      router.push("/admin/dashboard");
+    } catch (err) {
+      if (err.code !== "auth/popup-closed-by-user") {
+        let message = "Unable to sign in with Google. Please try again.";
+        if (err.code === "auth/popup-blocked") {
+          message = "The sign-in popup was blocked. Please allow popups and try again.";
+        } else if (err.code === "auth/network-request-failed") {
+          message = "Network error. Please check your connection.";
+        }
+        setError(message);
+        console.error("Google sign-in error code:", err.code);
+      }
+    } finally {
+      setGoogleLoading(false);
     }
   }
 
@@ -171,6 +212,45 @@ export default function AdminLoginPage() {
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {loading ? "Signing in..." : "Log in to Admin Console"}
+            </button>
+
+            <div className="flex items-center gap-3">
+              <span className="h-px flex-1 bg-slate-200" />
+              <span className="text-[11.5px] font-medium uppercase tracking-wide text-slate-400">
+                or
+              </span>
+              <span className="h-px flex-1 bg-slate-200" />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={googleLoading}
+              className="flex w-full items-center justify-center gap-2.5 rounded-lg border-[1.5px] border-slate-200 bg-white py-3 font-semibold text-[13.5px] text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {googleLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+              ) : (
+                <svg className="h-4 w-4" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M23.5 12.27c0-.85-.08-1.66-.22-2.45H12v4.64h6.45a5.52 5.52 0 0 1-2.4 3.62v3h3.87c2.27-2.09 3.58-5.17 3.58-8.81z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 24c3.24 0 5.96-1.07 7.94-2.91l-3.87-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.29v3.1A12 12 0 0 0 12 24z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.27 14.28a7.2 7.2 0 0 1 0-4.56v-3.1H1.29a12 12 0 0 0 0 10.76l3.98-3.1z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 4.77c1.76 0 3.34.6 4.58 1.79l3.44-3.44A11.98 11.98 0 0 0 12 0 12 12 0 0 0 1.29 6.62l3.98 3.1C6.22 6.88 8.87 4.77 12 4.77z"
+                  />
+                </svg>
+              )}
+              {googleLoading ? "Signing in with Google..." : "Continue with Google"}
             </button>
 
             <span className="text-center text-[13px] text-slate-500">
