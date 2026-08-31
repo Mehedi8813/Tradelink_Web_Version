@@ -1,4 +1,11 @@
-import { Layers, Mail, Lock, Eye, EyeOff } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 
 function TradeLinkLogo({ className = "" }) {
   return (
@@ -19,6 +26,49 @@ function TradeLinkLogo({ className = "" }) {
 }
 
 export default function AdminLoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await setDoc(
+        doc(db, "adminSessions", user.uid),
+        {
+          email: user.email,
+          lastLoginAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      router.push("/admin/dashboard");
+    } catch (err) {
+      let message = "Unable to sign in. Please check your credentials.";
+      if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+        message = "Invalid email or password.";
+      } else if (err.code === "auth/invalid-email") {
+        message = "Please enter a valid email address.";
+      } else if (err.code === "auth/too-many-requests") {
+        message = "Too many failed attempts. Please try again later.";
+      } else if (err.code === "auth/network-request-failed") {
+        message = "Network error. Please check your connection.";
+      }
+      setError(message);
+      console.error("Firebase sign-in error code:", err.code);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="flex min-h-full flex-1 bg-slate-100">
       <div className="flex w-full">
@@ -40,7 +90,7 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="flex flex-1 items-center justify-center bg-slate-100 px-6">
-          <form className="flex w-full max-w-[340px] flex-col gap-4">
+          <form className="flex w-full max-w-[340px] flex-col gap-4" onSubmit={handleSubmit}>
             <div className="mb-1">
               <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-xl bg-[#0f766e] text-white md:hidden">
                 <TradeLinkLogo className="h-6 w-6" />
@@ -53,6 +103,12 @@ export default function AdminLoginPage() {
               </span>
             </div>
 
+            {error && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[13px] font-medium text-red-600">
+                {error}
+              </div>
+            )}
+
             <div className="flex flex-col gap-1.5">
               <label className="text-[12.5px] font-semibold text-slate-700">
                 Email address
@@ -61,6 +117,9 @@ export default function AdminLoginPage() {
                 <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@tradelink.com.bd"
                   className="w-full rounded-lg border-[1.5px] border-slate-200 bg-white py-[11px] pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#0f766e] focus:outline-none"
                 />
@@ -74,16 +133,20 @@ export default function AdminLoginPage() {
               <div className="relative">
                 <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full rounded-lg border-[1.5px] border-slate-200 bg-white py-[11px] pl-9 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#0f766e] focus:outline-none"
                 />
                 <button
                   type="button"
-                  aria-label="Show password"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword((s) => !s)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
-                  <Eye className="h-4 w-4" />
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
@@ -103,9 +166,11 @@ export default function AdminLoginPage() {
 
             <button
               type="submit"
-              className="w-full rounded-lg bg-[#0f766e] py-3 font-semibold text-[13.5px] text-white transition-colors hover:bg-[#0d4a45]"
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#0f766e] py-3 font-semibold text-[13.5px] text-white transition-colors hover:bg-[#0d4a45] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Log in to Admin Console
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {loading ? "Signing in..." : "Log in to Admin Console"}
             </button>
 
             <span className="text-center text-[13px] text-slate-500">
