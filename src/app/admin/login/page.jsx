@@ -12,6 +12,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
+import { supabase } from "@/lib/supabase";
 
 function TradeLinkLogo({ className = "" }) {
   return (
@@ -103,6 +104,29 @@ export default function AdminLoginPage() {
         console.error(
           "Failed to save admin session:",
           firestoreError
+        );
+      }
+
+      // ==============================
+      // SAVE ADMIN TO SUPABASE
+      // ==============================
+      try {
+        await supabase
+          .from("admins")
+          .upsert(
+            {
+              uid: user.uid,
+              email: user.email,
+              name: user.displayName || "",
+              provider: "email",
+              auth_id: user.uid,
+            },
+            { onConflict: "email" }
+          );
+      } catch (supabaseError) {
+        console.error(
+          "Failed to save admin to Supabase:",
+          supabaseError
         );
       }
 
@@ -227,6 +251,30 @@ export default function AdminLoginPage() {
         console.error(
           "Failed to save admin session:",
           firestoreError
+        );
+      }
+
+      // ==============================
+      // SAVE ADMIN TO SUPABASE
+      // ==============================
+      try {
+        await supabase
+          .from("admins")
+          .upsert(
+            {
+              uid: user.uid,
+              email: user.email,
+              name: user.displayName || "",
+              photo_url: user.photoURL || "",
+              provider: "google",
+              auth_id: user.uid,
+            },
+            { onConflict: "email" }
+          );
+      } catch (supabaseError) {
+        console.error(
+          "Failed to save admin to Supabase:",
+          supabaseError
         );
       }
 
