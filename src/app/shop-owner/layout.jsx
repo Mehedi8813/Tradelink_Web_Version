@@ -38,7 +38,7 @@ export default function ShopOwnerLayout({ children }) {
         <div className="p-6 pb-4 border-b border-slate-800">
           <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
             <Store className="h-5 w-5 text-[#136353]" />
-            Retailer Portal
+            Shop Owner Portal
           </h2>
           <p className="text-xs font-medium text-slate-400 mt-1 truncate">{user.business_name}</p>
         </div>

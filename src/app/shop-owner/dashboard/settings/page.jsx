@@ -468,7 +468,7 @@ export default function ShopOwnerSettingsPage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between py-3 border-b border-slate-50">
                       <span className="text-sm font-medium text-slate-500">Account Type</span>
-                      <span className="text-sm font-bold text-slate-900">Retailer (Shop Owner)</span>
+                      <span className="text-sm font-bold text-slate-900">Shop Owner</span>
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-slate-50">
                       <span className="text-sm font-medium text-slate-500">Phone Number</span>

@@ -226,7 +226,7 @@ export default function ShopOwnerHomePage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `retailer-report-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `shop-owner-report-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -258,7 +258,7 @@ export default function ShopOwnerHomePage() {
           className="flex items-center justify-between mb-8 opacity-0 animate-[fadeSlideUp_0.6s_ease-out_forwards]"
         >
           <div>
-            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Retailer Dashboard</h1>
+            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Shop Owner Dashboard</h1>
             <p className="mt-1.5 text-sm text-slate-500 font-medium">Overview of your purchasing and spending trends.</p>
           </div>
           <button

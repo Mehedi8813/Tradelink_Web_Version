@@ -152,7 +152,7 @@ export default function LoginPage() {
       typeId: "email",
     },
     shop_owner: {
-      title: "Retailer Portal",
+      title: "Shop Owner Portal",
       desc: "View your buying details, order history, and supplier insights.",
       labelId: "Phone Number",
       placeholderId: "e.g. 01560016744",
@@ -235,7 +235,7 @@ export default function LoginPage() {
                   : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              <Store className="h-4 w-4" /> Retailer
+              <Store className="h-4 w-4" /> Shop Owner
             </button>
             <button
               onClick={() => {
@@ -262,7 +262,7 @@ export default function LoginPage() {
               </div>
               <h2 className="mb-2 text-2xl font-bold text-slate-900">Under Maintenance</h2>
               <p className="text-base text-slate-500 max-w-[280px]">
-                The {role === "shop_owner" ? "Retailer" : "Supplier"} portal is currently undergoing scheduled maintenance. Please check back later.
+                The {role === "shop_owner" ? "Shop Owner" : "Supplier"} portal is currently undergoing scheduled maintenance. Please check back later.
               </p>
             </div>
           ) : (
@@ -270,7 +270,7 @@ export default function LoginPage() {
               <div className="mb-10">
                 <h2 className="mb-2 text-3xl font-bold text-slate-900">Sign in</h2>
                 <p className="text-base text-slate-500">
-                  Use your {role === "admin" ? "administrator" : role === "shop_owner" ? "retailer" : "supplier"} credentials
+                  Use your {role === "admin" ? "administrator" : role === "shop_owner" ? "shop owner" : "supplier"} credentials
                 </p>
               </div>
 
