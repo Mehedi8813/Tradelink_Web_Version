@@ -68,9 +68,12 @@ export default function OrdersPage() {
   }, []);
 
   const filteredOrders = orders.filter((order) => {
+    const searchLower = search.toLowerCase();
+    const shortId = order.id?.slice(0, 8).toLowerCase() || "";
     const matchesSearch =
-      order.product_name?.toLowerCase().includes(search.toLowerCase()) ||
-      order.id?.toLowerCase().includes(search.toLowerCase());
+      order.product_name?.toLowerCase().includes(searchLower) ||
+      order.id?.toLowerCase().includes(searchLower) ||
+      shortId.includes(searchLower);
     const matchesStatus =
       statusFilter === "all" || order.status?.toLowerCase() === statusFilter;
     return matchesSearch && matchesStatus;
