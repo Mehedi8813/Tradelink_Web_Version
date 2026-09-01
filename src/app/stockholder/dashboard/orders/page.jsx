@@ -168,12 +168,6 @@ export default function OrdersPage() {
               <span class="value" style="max-width: 200px; text-align: right;">${selectedOrder.delivery_address}</span>
             </div>
             ` : ""}
-            ${selectedOrder.delivery_otp ? `
-            <div class="row">
-              <span class="label">Delivery OTP</span>
-              <span class="value" style="font-size: 18px; color: #136353;">${selectedOrder.delivery_otp}</span>
-            </div>
-            ` : ""}
           </div>
           <div class="total-row">
             <span class="total-label">Total Amount</span>
@@ -424,12 +418,6 @@ export default function OrdersPage() {
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-500 font-medium">Address</span>
                       <span className="font-bold text-right max-w-[200px]">{selectedOrder.delivery_address}</span>
-                    </div>
-                  )}
-                  {selectedOrder.delivery_otp && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-500 font-medium">Delivery OTP</span>
-                      <span className="font-extrabold text-[#136353] text-lg">{selectedOrder.delivery_otp}</span>
                     </div>
                   )}
                 </div>
