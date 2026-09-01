@@ -113,6 +113,7 @@ function ChartCard({ title, children, className = "", delay = 0 }) {
 export default function SupplierHomePage() {
   const [metrics, setMetrics] = useState(null);
   const [recentOrders, setRecentOrders] = useState([]);
+  const [allOrders, setAllOrders] = useState([]);
   const [salesData, setSalesData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [orderStatusData, setOrderStatusData] = useState([]);
@@ -168,6 +169,8 @@ export default function SupplierHomePage() {
         .sort((a, b) => b[1] - a[1])
         .map(([name, value], i) => ({ name, value, color: colors[i % colors.length] }));
       setCategoryData(catData);
+
+      setAllOrders(ords);
 
       setRecentOrders(
         ords.slice(0, 5).map((o) => ({
@@ -261,9 +264,17 @@ export default function SupplierHomePage() {
       ["Total Orders", metrics.totalOrders],
       ["Active Products", metrics.activeProducts],
       [],
-      ["Recent Orders"],
-      ["Product", "Amount (৳)", "Status", "Date"],
-      ...recentOrders.map((o) => [o.product, o.amount.toFixed(2), o.status, o.date]),
+      ["All Orders"],
+      ["Order ID", "Product", "Quantity", "Unit Price", "Total Amount", "Status", "Date"],
+      ...allOrders.map((o) => [
+        o.id?.slice(0, 8).toUpperCase() || "",
+        o.product_name || "Unknown",
+        o.quantity || 0,
+        Number(o.unit_price || 0).toFixed(2),
+        Number(o.total_amount || 0).toFixed(2),
+        o.status || "pending",
+        new Date(o.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      ]),
     ];
     const csv = rows.map((r) => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
