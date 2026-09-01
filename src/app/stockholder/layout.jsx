@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { LogOut, Package, LayoutDashboard, Database } from "lucide-react";
+import { LogOut, Package, LayoutDashboard, Database, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
@@ -65,6 +65,17 @@ export default function StockholderLayout({ children }) {
           >
             <Package className="h-4 w-4" />
             Inventory
+          </a>
+          <a
+            href="/stockholder/dashboard/settings"
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
+              pathname === "/stockholder/dashboard/settings"
+                ? "bg-emerald-500/10 text-emerald-400"
+                : "hover:bg-white/5 hover:text-white"
+            }`}
+          >
+            <Settings className="h-4 w-4" />
+            Settings
           </a>
         </nav>
 
