@@ -113,12 +113,15 @@ function ChartCard({ title, children, className = "", delay = 0 }) {
 export default function SupplierHomePage() {
   const [metrics, setMetrics] = useState(null);
   const [recentOrders, setRecentOrders] = useState([]);
+  const [allOrders, setAllOrders] = useState([]);
   const [salesData, setSalesData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [orderStatusData, setOrderStatusData] = useState([]);
   const [topProductsData, setTopProductsData] = useState([]);
   const [monthlySalesData, setMonthlySalesData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -136,7 +139,7 @@ export default function SupplierHomePage() {
 
       const { data: orders, error: ordErr } = await supabase
         .from("orders")
-        .select("id, product_name, total_amount, status, created_at, supplier_id")
+        .select("id, product_name, quantity, unit_price, total_amount, status, created_at, supplier_id")
         .eq("supplier_id", user.id)
         .order("created_at", { ascending: false });
 
@@ -168,6 +171,8 @@ export default function SupplierHomePage() {
         .sort((a, b) => b[1] - a[1])
         .map(([name, value], i) => ({ name, value, color: colors[i % colors.length] }));
       setCategoryData(catData);
+
+      setAllOrders(ords);
 
       setRecentOrders(
         ords.slice(0, 5).map((o) => ({
@@ -252,25 +257,63 @@ export default function SupplierHomePage() {
     if (!metrics) return;
     const userStr = localStorage.getItem("tradelink_web_user");
     const user = userStr ? JSON.parse(userStr) : {};
+
+    // Filter orders by date range
+    let filteredOrders = allOrders;
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      filteredOrders = filteredOrders.filter((o) => new Date(o.created_at) >= start);
+    }
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      filteredOrders = filteredOrders.filter((o) => new Date(o.created_at) <= end);
+    }
+
+    const totalFilteredSales = filteredOrders
+      .filter((o) => o.status === "delivered" || o.status === "completed")
+      .reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+
+    const dateRangeLabel = startDate && endDate
+      ? `${startDate} to ${endDate}`
+      : startDate
+      ? `From ${startDate}`
+      : endDate
+      ? `Until ${endDate}`
+      : "All time";
+
     const rows = [
-      ["Metric", "Value"],
+      ["Supplier Report"],
       ["Business Name", user.business_name || ""],
+      ["Date Range", dateRangeLabel],
+      ["Generated On", new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })],
+      [],
+      ["Summary"],
       ["Total Stock Units", metrics.totalStock],
       ["Total Stock Value (৳)", metrics.totalStockValue.toFixed(2)],
-      ["Total Sales (৳)", metrics.totalSales.toFixed(2)],
-      ["Total Orders", metrics.totalOrders],
+      ["Filtered Sales (৳)", totalFilteredSales.toFixed(2)],
+      ["Filtered Orders", filteredOrders.length],
       ["Active Products", metrics.activeProducts],
       [],
-      ["Recent Orders"],
-      ["Product", "Amount (৳)", "Status", "Date"],
-      ...recentOrders.map((o) => [o.product, o.amount.toFixed(2), o.status, o.date]),
+      ["Orders"],
+      ["Order ID", "Product", "Quantity", "Unit Price", "Total Amount", "Status", "Date"],
+      ...filteredOrders.map((o) => [
+        o.id?.slice(0, 8).toUpperCase() || "",
+        o.product_name || "Unknown",
+        o.quantity || 0,
+        Number(o.unit_price || 0).toFixed(2),
+        Number(o.total_amount || 0).toFixed(2),
+        o.status || "pending",
+        new Date(o.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      ]),
     ];
     const csv = rows.map((r) => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `supplier-report-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `supplier-report-${startDate || "all"}-to-${endDate || "all"}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -309,13 +352,33 @@ export default function SupplierHomePage() {
             <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Supplier Dashboard</h1>
             <p className="mt-1.5 text-sm text-slate-500 font-medium">Overview of your stock and sales performance.</p>
           </div>
-          <button
-            onClick={downloadCSV}
-            className="group flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-[#136353] to-[#1a7d6a] px-5 py-3 text-sm font-semibold text-white hover:from-[#0f5043] hover:to-[#136353] transition-all duration-300 shadow-lg shadow-emerald-900/20 hover:shadow-xl hover:shadow-emerald-900/30 hover:-translate-y-0.5 active:translate-y-0"
-          >
-            <Download className="h-4 w-4 group-hover:animate-bounce" />
-            Download CSV
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-white rounded-xl border border-slate-200 px-3 py-2">
+              <label className="text-xs font-bold text-slate-500">From</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="text-sm font-medium text-slate-700 border-none outline-none cursor-pointer"
+              />
+            </div>
+            <div className="flex items-center gap-2 bg-white rounded-xl border border-slate-200 px-3 py-2">
+              <label className="text-xs font-bold text-slate-500">To</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="text-sm font-medium text-slate-700 border-none outline-none cursor-pointer"
+              />
+            </div>
+            <button
+              onClick={downloadCSV}
+              className="group flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-[#136353] to-[#1a7d6a] px-5 py-3 text-sm font-semibold text-white hover:from-[#0f5043] hover:to-[#136353] transition-all duration-300 shadow-lg shadow-emerald-900/20 hover:shadow-xl hover:shadow-emerald-900/30 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <Download className="h-4 w-4 group-hover:animate-bounce" />
+              Download CSV
+            </button>
+          </div>
         </div>
 
         {/* Stat Cards */}
