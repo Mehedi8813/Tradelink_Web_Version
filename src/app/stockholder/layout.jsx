@@ -1,12 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { LogOut, Package, FileText, Database } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { LogOut, Package, LayoutDashboard, Database } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
 export default function StockholderLayout({ children }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -43,13 +44,27 @@ export default function StockholderLayout({ children }) {
         </div>
         
         <nav className="flex-1 px-4 mt-6 space-y-1">
-          <a href="/stockholder/dashboard" className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 font-medium">
-            <Package className="h-4 w-4" />
-            Inventory Details
+          <a
+            href="/stockholder/dashboard/home"
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
+              pathname === "/stockholder/dashboard/home"
+                ? "bg-emerald-500/10 text-emerald-400"
+                : "hover:bg-white/5 hover:text-white"
+            }`}
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            Dashboard
           </a>
-          <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-white/5 hover:text-white font-medium transition-colors">
-            <FileText className="h-4 w-4" />
-            Bulk CSV Upload
+          <a
+            href="/stockholder/dashboard/inventory"
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
+              pathname === "/stockholder/dashboard/inventory"
+                ? "bg-emerald-500/10 text-emerald-400"
+                : "hover:bg-white/5 hover:text-white"
+            }`}
+          >
+            <Package className="h-4 w-4" />
+            Inventory
           </a>
         </nav>
 

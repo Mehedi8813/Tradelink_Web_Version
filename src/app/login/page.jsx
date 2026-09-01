@@ -43,6 +43,7 @@ export default function LoginPage() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [keepMeSignedIn, setKeepMeSignedIn] = useState(false);
   
   // 2FA States removed by user request
 
