@@ -60,13 +60,9 @@ export const CHART_COLORS = {
  */
 export const PRODUCT_CATEGORIES = [
   "Grocery",
-  "Electronics",
-  "Clothing",
-  "Home & Kitchen",
-  "Beauty & Health",
-  "Sports & Outdoors",
-  "Automotive",
-  "Books & Stationery",
+  "Pharmacy",
+  "Stationery",
+  "Hardware",
 ];
 
 /**
@@ -74,13 +70,8 @@ export const PRODUCT_CATEGORIES = [
  */
 export const UNITS = [
   { value: "kg", label: "Kilogram" },
-  { value: "g", label: "Gram" },
   { value: "litre", label: "Litre" },
-  { value: "ml", label: "Millilitre" },
   { value: "pcs", label: "Pieces" },
-  { value: "box", label: "Box" },
-  { value: "dozen", label: "Dozen" },
-  { value: "pack", label: "Pack" },
 ];
 
 /**

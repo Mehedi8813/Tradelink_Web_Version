@@ -7,24 +7,15 @@ import { toast, Toaster } from "sonner";
 
 const CATEGORIES = [
   "Grocery",
-  "Electronics",
-  "Clothing",
-  "Home & Kitchen",
-  "Beauty & Health",
-  "Sports & Outdoors",
-  "Automotive",
-  "Books & Stationery",
+  "Pharmacy",
+  "Stationery",
+  "Hardware",
 ];
 
 const UNITS = [
   { value: "kg", label: "kg" },
-  { value: "g", label: "g" },
   { value: "litre", label: "litre" },
-  { value: "ml", label: "ml" },
   { value: "pcs", label: "pcs" },
-  { value: "box", label: "box" },
-  { value: "dozen", label: "dozen" },
-  { value: "pack", label: "pack" },
 ];
 
 const INITIAL_FORM = {
