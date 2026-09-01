@@ -179,9 +179,9 @@ export default function LoginPage() {
   }, []);
 
   const isMaintenance = systemSettings && role !== "admin" && (
-    systemSettings.maintenance_mode_full || 
-    (role === "supplier" && systemSettings.maintenance_mode_supplier) ||
-    (role === "shop_owner" && systemSettings.maintenance_mode_shop_owner)
+    systemSettings.maintenance_mode_web_all || 
+    (role === "supplier" && systemSettings.maintenance_mode_web_supplier) ||
+    (role === "shop_owner" && systemSettings.maintenance_mode_web_shop_owner)
   );
 
   return (

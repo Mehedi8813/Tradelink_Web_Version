@@ -18,10 +18,14 @@ export default function SettingsPage() {
   const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("Master Admin");
   const [allowRegistrations, setAllowRegistrations] = useState(true);
-  const [maintenanceFull, setMaintenanceFull] = useState(false);
-  const [maintenanceSupplier, setMaintenanceSupplier] = useState(false);
-  const [maintenanceShopOwner, setMaintenanceShopOwner] = useState(false);
-  const [maintenanceRider, setMaintenanceRider] = useState(false);
+  const [maintenanceWebAll, setMaintenanceWebAll] = useState(false);
+  const [maintenanceWebSupplier, setMaintenanceWebSupplier] = useState(false);
+  const [maintenanceWebShopOwner, setMaintenanceWebShopOwner] = useState(false);
+  
+  const [maintenanceAppAll, setMaintenanceAppAll] = useState(false);
+  const [maintenanceAppSupplier, setMaintenanceAppSupplier] = useState(false);
+  const [maintenanceAppShopOwner, setMaintenanceAppShopOwner] = useState(false);
+  const [maintenanceAppRider, setMaintenanceAppRider] = useState(false);
 
   // Security State
   const [newPassword, setNewPassword] = useState("");
@@ -42,10 +46,13 @@ export default function SettingsPage() {
       const { data, error } = await supabase.from('system_settings').select('*').eq('id', 1).single();
       if (data) {
         setAllowRegistrations(data.allow_new_registrations);
-        setMaintenanceFull(data.maintenance_mode_full);
-        setMaintenanceSupplier(data.maintenance_mode_supplier);
-        setMaintenanceShopOwner(data.maintenance_mode_shop_owner);
-        setMaintenanceRider(data.maintenance_mode_delivery_man);
+        setMaintenanceWebAll(data.maintenance_mode_web_all);
+        setMaintenanceWebSupplier(data.maintenance_mode_web_supplier);
+        setMaintenanceWebShopOwner(data.maintenance_mode_web_shop_owner);
+        setMaintenanceAppAll(data.maintenance_mode_app_all);
+        setMaintenanceAppSupplier(data.maintenance_mode_app_supplier);
+        setMaintenanceAppShopOwner(data.maintenance_mode_app_shop_owner);
+        setMaintenanceAppRider(data.maintenance_mode_app_delivery_man);
       }
       setIsSettingsLoaded(true);
     };
@@ -67,10 +74,13 @@ export default function SettingsPage() {
 
       const { error } = await supabase.from('system_settings').update({
         allow_new_registrations: allowRegistrations,
-        maintenance_mode_full: maintenanceFull,
-        maintenance_mode_supplier: maintenanceSupplier,
-        maintenance_mode_shop_owner: maintenanceShopOwner,
-        maintenance_mode_delivery_man: maintenanceRider,
+        maintenance_mode_web_all: maintenanceWebAll,
+        maintenance_mode_web_supplier: maintenanceWebSupplier,
+        maintenance_mode_web_shop_owner: maintenanceWebShopOwner,
+        maintenance_mode_app_all: maintenanceAppAll,
+        maintenance_mode_app_supplier: maintenanceAppSupplier,
+        maintenance_mode_app_shop_owner: maintenanceAppShopOwner,
+        maintenance_mode_app_delivery_man: maintenanceAppRider,
         updated_at: new Date().toISOString()
       }).eq('id', 1);
 
@@ -245,50 +255,87 @@ export default function SettingsPage() {
                       <AlertTriangle className="w-5 h-5 text-amber-500" />
                       <h4 className="font-bold text-slate-900 text-lg">Maintenance Mode Controls</h4>
                     </div>
-                    <p className="text-[13px] text-slate-500 font-medium mb-6">Show a maintenance screen to users and prevent them from logging in. You can toggle this globally or for specific roles.</p>
+                    <p className="text-[13px] text-slate-500 font-medium mb-6">Show a maintenance screen to users and prevent them from logging in. You can toggle this separately for the Web Portal and the Mobile App.</p>
                     
-                    <div className="space-y-4 pl-4 border-l-2 border-slate-100">
+                    {/* WEB MAINTENANCE */}
+                    <div className="mb-6 space-y-4 pl-4 border-l-2 border-indigo-100">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="font-bold text-red-600">Full App Maintenance</h4>
-                          <p className="text-xs text-slate-500 font-medium">Block ALL non-admin users from accessing the platform.</p>
+                          <h4 className="font-bold text-indigo-600">Full Web Maintenance</h4>
+                          <p className="text-xs text-slate-500 font-medium">Block BOTH Shop Owners and Suppliers from accessing the Web Portal.</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" checked={maintenanceFull} onChange={() => setMaintenanceFull(!maintenanceFull)} className="sr-only peer" />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                          <input type="checkbox" checked={maintenanceWebAll} onChange={() => setMaintenanceWebAll(!maintenanceWebAll)} className="sr-only peer" />
+                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
                         </label>
                       </div>
 
                       <div className="flex items-center justify-between opacity-80">
                         <div>
-                          <h4 className="font-bold text-slate-700">Supplier Maintenance</h4>
-                          <p className="text-xs text-slate-500 font-medium">Block ONLY Supplier accounts.</p>
+                          <h4 className="font-bold text-slate-700">Web Supplier Maintenance</h4>
+                          <p className="text-xs text-slate-500 font-medium">Block ONLY Supplier accounts from the Web Portal.</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" disabled={maintenanceFull} checked={maintenanceSupplier} onChange={() => setMaintenanceSupplier(!maintenanceSupplier)} className="sr-only peer" />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                          <input type="checkbox" disabled={maintenanceWebAll} checked={maintenanceWebSupplier} onChange={() => setMaintenanceWebSupplier(!maintenanceWebSupplier)} className="sr-only peer" />
+                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-400"></div>
                         </label>
                       </div>
 
                       <div className="flex items-center justify-between opacity-80">
                         <div>
-                          <h4 className="font-bold text-slate-700">Shop Owner Maintenance</h4>
-                          <p className="text-xs text-slate-500 font-medium">Block ONLY Shop Owner accounts.</p>
+                          <h4 className="font-bold text-slate-700">Web Shop Owner Maintenance</h4>
+                          <p className="text-xs text-slate-500 font-medium">Block ONLY Shop Owner accounts from the Web Portal.</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" disabled={maintenanceFull} checked={maintenanceShopOwner} onChange={() => setMaintenanceShopOwner(!maintenanceShopOwner)} className="sr-only peer" />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                          <input type="checkbox" disabled={maintenanceWebAll} checked={maintenanceWebShopOwner} onChange={() => setMaintenanceWebShopOwner(!maintenanceWebShopOwner)} className="sr-only peer" />
+                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-400"></div>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* APP MAINTENANCE */}
+                    <div className="space-y-4 pl-4 border-l-2 border-emerald-100">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-bold text-emerald-600">Full App Maintenance</h4>
+                          <p className="text-xs text-slate-500 font-medium">Block ALL users from accessing the Mobile App.</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" checked={maintenanceAppAll} onChange={() => setMaintenanceAppAll(!maintenanceAppAll)} className="sr-only peer" />
+                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                         </label>
                       </div>
 
                       <div className="flex items-center justify-between opacity-80">
                         <div>
-                          <h4 className="font-bold text-slate-700">Rider Maintenance</h4>
-                          <p className="text-xs text-slate-500 font-medium">Block ONLY Delivery Man (Rider) accounts.</p>
+                          <h4 className="font-bold text-slate-700">App Supplier Maintenance</h4>
+                          <p className="text-xs text-slate-500 font-medium">Block ONLY Supplier accounts from the Mobile App.</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" disabled={maintenanceFull} checked={maintenanceRider} onChange={() => setMaintenanceRider(!maintenanceRider)} className="sr-only peer" />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                          <input type="checkbox" disabled={maintenanceAppAll} checked={maintenanceAppSupplier} onChange={() => setMaintenanceAppSupplier(!maintenanceAppSupplier)} className="sr-only peer" />
+                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-400"></div>
+                        </label>
+                      </div>
+
+                      <div className="flex items-center justify-between opacity-80">
+                        <div>
+                          <h4 className="font-bold text-slate-700">App Shop Owner Maintenance</h4>
+                          <p className="text-xs text-slate-500 font-medium">Block ONLY Shop Owner accounts from the Mobile App.</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" disabled={maintenanceAppAll} checked={maintenanceAppShopOwner} onChange={() => setMaintenanceAppShopOwner(!maintenanceAppShopOwner)} className="sr-only peer" />
+                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-400"></div>
+                        </label>
+                      </div>
+
+                      <div className="flex items-center justify-between opacity-80">
+                        <div>
+                          <h4 className="font-bold text-slate-700">App Rider Maintenance</h4>
+                          <p className="text-xs text-slate-500 font-medium">Block ONLY Delivery Man (Rider) accounts from the Mobile App.</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" disabled={maintenanceAppAll} checked={maintenanceAppRider} onChange={() => setMaintenanceAppRider(!maintenanceAppRider)} className="sr-only peer" />
+                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-400"></div>
                         </label>
                       </div>
                     </div>
