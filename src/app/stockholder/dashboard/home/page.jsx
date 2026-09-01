@@ -139,7 +139,7 @@ export default function SupplierHomePage() {
 
       const { data: orders, error: ordErr } = await supabase
         .from("orders")
-        .select("id, product_name, total_amount, status, created_at, supplier_id")
+        .select("id, product_name, quantity, unit_price, total_amount, status, created_at, supplier_id")
         .eq("supplier_id", user.id)
         .order("created_at", { ascending: false });
 
