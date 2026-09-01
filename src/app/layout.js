@@ -19,8 +19,30 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "TradeLink",
-  description: "TradeLink — Retail network platform",
+  title: {
+    default: "TradeLink — Retail Network Platform",
+    template: "%s | TradeLink",
+  },
+  description: "TradeLink connects shop owners, suppliers, and delivery partners in a seamless retail network. Manage inventory, process orders, and grow your business.",
+  keywords: ["trade", "retail", "inventory", "supplier", "shop owner", "delivery", "B2B", "ecommerce"],
+  authors: [{ name: "TradeLink Team" }],
+  creator: "TradeLink",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "TradeLink",
+    title: "TradeLink — Retail Network Platform",
+    description: "Connect with suppliers, manage inventory, and streamline your retail operations.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TradeLink — Retail Network Platform",
+    description: "Connect with suppliers, manage inventory, and streamline your retail operations.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }) {
