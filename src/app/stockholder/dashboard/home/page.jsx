@@ -24,6 +24,13 @@ import {
   Pie,
 } from "recharts";
 
+/**
+ * Custom hook for animating a number from 0 to target value.
+ * Uses requestAnimationFrame with cubic easing for smooth animation.
+ * @param {number} target - The target number to animate to
+ * @param {number} duration - Animation duration in milliseconds (default: 800ms)
+ * @returns {number} The current animated value
+ */
 function useAnimatedNumber(target, duration = 800) {
   const [current, setCurrent] = useState(0);
   const frameRef = useRef(null);
@@ -48,6 +55,18 @@ function useAnimatedNumber(target, duration = 800) {
   return current;
 }
 
+/**
+ * AnimatedStatCard - Displays a metric card with animated number counter.
+ * Features hover effects, staggered entrance animation, and icon scaling.
+ * @param {string} title - The metric label
+ * @param {string|number} value - The metric value to display
+ * @param {string} prefix - Currency or text prefix for the value
+ * @param {string} trend - Trend description text
+ * @param {string} trendColor - Tailwind color class for trend text
+ * @param {React.ReactNode} icon - Lucide icon component
+ * @param {string} iconBg - Tailwind background class for icon container
+ * @param {number} delay - Animation delay in milliseconds
+ */
 function AnimatedStatCard({ title, value, prefix = "", suffix = "", trend, trendColor, icon, iconBg, delay }) {
   const numericValue = typeof value === "number" ? value : parseInt(String(value).replace(/[^0-9]/g, "")) || 0;
   const animated = useAnimatedNumber(numericValue, 1000);
@@ -71,6 +90,14 @@ function AnimatedStatCard({ title, value, prefix = "", suffix = "", trend, trend
   );
 }
 
+/**
+ * ChartCard - Wrapper component for chart containers with consistent styling.
+ * Provides white background, rounded corners, shadow, and entrance animation.
+ * @param {string} title - Chart section heading
+ * @param {React.ReactNode} children - Chart content
+ * @param {string} className - Additional CSS classes
+ * @param {number} delay - Animation delay in milliseconds
+ */
 function ChartCard({ title, children, className = "", delay = 0 }) {
   return (
     <div
