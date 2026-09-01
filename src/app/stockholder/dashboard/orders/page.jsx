@@ -68,9 +68,12 @@ export default function OrdersPage() {
   }, []);
 
   const filteredOrders = orders.filter((order) => {
+    const searchLower = search.toLowerCase();
+    const shortId = order.id?.slice(0, 8).toLowerCase() || "";
     const matchesSearch =
-      order.product_name?.toLowerCase().includes(search.toLowerCase()) ||
-      order.id?.toLowerCase().includes(search.toLowerCase());
+      order.product_name?.toLowerCase().includes(searchLower) ||
+      order.id?.toLowerCase().includes(searchLower) ||
+      shortId.includes(searchLower);
     const matchesStatus =
       statusFilter === "all" || order.status?.toLowerCase() === statusFilter;
     return matchesSearch && matchesStatus;
@@ -281,7 +284,6 @@ export default function OrdersPage() {
                   <th className="px-6 py-4 font-semibold text-slate-700">Unit Price</th>
                   <th className="px-6 py-4 font-semibold text-slate-700">Total</th>
                   <th className="px-6 py-4 font-semibold text-slate-700">Status</th>
-                  <th className="px-6 py-4 font-semibold text-slate-700">Payment</th>
                   <th className="px-6 py-4 font-semibold text-slate-700">Date</th>
                   <th className="px-6 py-4 font-semibold text-slate-700 text-right">Actions</th>
                 </tr>
@@ -289,7 +291,7 @@ export default function OrdersPage() {
               <tbody className="divide-y divide-slate-100">
                 {loading ? (
                   <tr>
-                    <td colSpan="9" className="px-6 py-16 text-center">
+                    <td colSpan="8" className="px-6 py-16 text-center">
                       <div className="flex flex-col items-center gap-3">
                         <div className="relative">
                           <div className="h-8 w-8 rounded-full border-3 border-slate-200"></div>
@@ -301,7 +303,7 @@ export default function OrdersPage() {
                   </tr>
                 ) : filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan="9" className="px-6 py-16 text-center text-slate-500">
+                    <td colSpan="8" className="px-6 py-16 text-center text-slate-500">
                       <ShoppingCart className="mx-auto h-12 w-12 text-slate-300 mb-3" />
                       <p className="text-base font-medium text-slate-900">No orders found</p>
                       <p className="text-sm">No orders match your search criteria.</p>
@@ -328,13 +330,6 @@ export default function OrdersPage() {
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${STATUS_STYLES[order.status] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
                           {order.status || "N/A"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase ${
-                          order.payment_status === "paid" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
-                        }`}>
-                          {order.payment_status || "unpaid"}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-slate-600 text-xs font-medium">
