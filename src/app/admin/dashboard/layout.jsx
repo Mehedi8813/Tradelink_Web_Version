@@ -1,8 +1,8 @@
 "use client";
-
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { LogOut, Users, Settings, Activity, FileText } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,7 +25,7 @@ export default function AdminLayout({ children }) {
         </div>
         
         <nav className="flex-1 px-4 mt-8 space-y-1 overflow-y-auto">
-          <a 
+          <Link 
             href="/admin/dashboard" 
             className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
               pathname === "/admin/dashboard"
@@ -35,8 +35,8 @@ export default function AdminLayout({ children }) {
           >
             <Activity className="h-5 w-5" />
             Dashboard
-          </a>
-          <a 
+          </Link>
+          <Link 
             href="/admin/dashboard/users" 
             className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
               pathname === "/admin/dashboard/users"
@@ -46,8 +46,8 @@ export default function AdminLayout({ children }) {
           >
             <Users className="h-5 w-5" />
             User Management
-          </a>
-          <a 
+          </Link>
+          <Link 
             href="/admin/dashboard/report" 
             className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
               pathname === "/admin/dashboard/report"
@@ -57,8 +57,8 @@ export default function AdminLayout({ children }) {
           >
             <FileText className="h-5 w-5" />
             Reports
-          </a>
-          <a 
+          </Link>
+          <Link 
             href="/admin/dashboard/settings" 
             className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
               pathname === "/admin/dashboard/settings"
@@ -68,7 +68,7 @@ export default function AdminLayout({ children }) {
           >
             <Settings className="h-5 w-5" />
             System Settings
-          </a>
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-white/10">

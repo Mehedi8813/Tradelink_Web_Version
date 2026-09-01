@@ -1,6 +1,6 @@
 "use client";
-
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { LogOut, Package, LayoutDashboard, Database, Settings, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -44,7 +44,7 @@ export default function StockholderLayout({ children }) {
         </div>
         
         <nav className="flex-1 px-4 mt-6 space-y-1">
-          <a
+          <Link
             href="/stockholder/dashboard/home"
             className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
               pathname === "/stockholder/dashboard/home"
@@ -54,8 +54,8 @@ export default function StockholderLayout({ children }) {
           >
             <LayoutDashboard className="h-4 w-4" />
             Dashboard
-          </a>
-          <a
+          </Link>
+          <Link
             href="/stockholder/dashboard/inventory"
             className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
               pathname === "/stockholder/dashboard/inventory"
@@ -65,8 +65,8 @@ export default function StockholderLayout({ children }) {
           >
             <Package className="h-4 w-4" />
             Inventory
-          </a>
-          <a
+          </Link>
+          <Link
             href="/stockholder/dashboard/orders"
             className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
               pathname === "/stockholder/dashboard/orders"
@@ -76,8 +76,8 @@ export default function StockholderLayout({ children }) {
           >
             <ShoppingCart className="h-4 w-4" />
             Orders
-          </a>
-          <a
+          </Link>
+          <Link
             href="/stockholder/dashboard/settings"
             className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
               pathname === "/stockholder/dashboard/settings"
@@ -87,7 +87,7 @@ export default function StockholderLayout({ children }) {
           >
             <Settings className="h-4 w-4" />
             Settings
-          </a>
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
